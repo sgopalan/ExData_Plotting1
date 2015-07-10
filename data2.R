@@ -4,9 +4,12 @@ if (!file.exists('./data/household_power_consumption_feb.Rda')) {
     if (!file.exists('./data')) {
         dir.create('./data')
     }
-    ## download the zip file
-    download.file('http://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip', './data/household_power_consumption.zip')
-
+    ## if zip file does not exist, download it
+    if (!file.exists('./data/household_power_consumption.zip')) {
+      download.file('http://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip', 
+                    './data/household_power_consumption.zip')      
+    }
+    
     ## read from zip file
     data <- read.table(unz('./data/household_power_consumption.zip', 'household_power_consumption.txt'), sep=';', header=TRUE)
 
@@ -26,12 +29,15 @@ if (!file.exists('./data/household_power_consumption_feb.Rda')) {
 ## load feb Data
 febData <- readRDS(file='./data/household_power_consumption_feb.Rda')
 
+## cast to numeric
+febData$Global_active_power <- as.numeric(as.character(febData$Global_active_power))
+
 ## Plot
 png('plot2.png', width=480, height=480, units='px')
 
 with(febData, 
      plot(DateTime, 
-          febData$Global_active_power, 
+          Global_active_power, 
           type='l', 
           xlab='', 
           ylab='Global Active Power (kilowatts)'))
